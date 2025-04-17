@@ -21,3 +21,9 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+# ISPConfig padrão
+error/
+favicon.ico
+robots.txt
+standard_index.html
+composer.phar
