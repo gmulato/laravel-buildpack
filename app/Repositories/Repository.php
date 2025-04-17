@@ -33,37 +33,43 @@ class Repository
     }
 
     /**
-     * Sincroniza uma relação HasMany simulando o comportamento do sync() de BelongsToMany.
+     * Sincroniza uma relação hasMany com base em uma chave identificadora.
      *
-     * @param HasMany $relation
-     * @param array $items
-     * @param string $key
-     * 
+     * Para cada item:
+     * - Se o item contiver o identificador (ex: 'id') e já existir na relação, será atualizado.
+     * - Se o identificador for null ou ausente, um novo registro será criado.
+     * - Todos os registros existentes na relação que não estiverem presentes nos dados fornecidos serão deletados.
+     *
+     * @param HasMany $relation Relação hasMany Eloquent (ex: $post->comments()).
+     * @param array $items Lista de dados que devem representar exatamente os filhos da relação.
+     * @param int $chunkSize Tamanho dos blocos usados na exclusão em massa.
+     * @param string $key Chave usada para identificar os registros (por padrão: 'id').
+     *
      * @return void
      */
-    protected function syncHasMany(HasMany $relation, array $items, int $chunkSize = 30, string $key = 'id'): void
+    protected function syncHasManyByKey(HasMany $relation, array $items, int $chunkSize = 30, string $key = 'id'): void
     {
         DB::transaction(function () use ($relation, $items, $key, $chunkSize) {
-            $existing = $relation->get([$key])->keyBy($key);
+            $existing = $relation->get()->keyBy($key);
             $existingIds = $existing->keys();
-
             $syncedIds = [];
-
+    
             foreach ($items as $item) {
-                if (isset($item[$key]) && $existing->has($item[$key])) {
+                if (!empty($item[$key]) && $existing->has($item[$key])) {
                     $model = $existing[$item[$key]];
+    
                     if (array_diff_assoc($item, $model->getAttributes())) {
                         $model->fill($item)->save();
                     }
+    
                     $syncedIds[] = $item[$key];
-                } else {
+                } elseif (empty($item[$key])) { 
                     $new = $relation->create($item);
                     $syncedIds[] = $new->$key;
                 }
             }
-
+            
             $idsToDelete = $existingIds->diff($syncedIds);
-
             if ($idsToDelete->isNotEmpty()) {
                 foreach ($idsToDelete->chunk($chunkSize) as $chunk) {
                     $relation->whereIn($key, $chunk->all())->delete();
