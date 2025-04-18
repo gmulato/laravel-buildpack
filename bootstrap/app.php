@@ -15,8 +15,13 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\HandleInertiaRequests::class,
         ]);
 
+        $middleware->api([
+            \App\Http\Middleware\EnsureJsonResponse::class,
+        ]);
+
         $middleware->alias([
             'prevent.back.history' => \App\Http\Middleware\PreventBackHistory::class,
+            'ensure.json.response' => \App\Http\Middleware\EnsureJsonResponse::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
