@@ -5,10 +5,10 @@ export default {
     content: [
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
+        './resources/views/**/*.blade.php',
+        './resources/views/*.blade.php',
         './resources/**/*.blade.php',
         './resources/**/*.js',
-        './resources/**/*.jsx', // Adicione esta linha para processar arquivos JSX
-        './resources/**/*.vue',
     ],
     theme: {
         extend: {

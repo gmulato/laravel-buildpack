@@ -11,10 +11,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->web([
-            \App\Http\Middleware\HandleInertiaRequests::class,
-        ]);
-
         $middleware->api([
             \App\Http\Middleware\EnsureJsonResponse::class,
         ]);
