@@ -10,7 +10,7 @@ InertiaProgress.init({
 });
 
 createInertiaApp({
-    title: (title) => `${title} - Super Publisher`,
+    title: (title) => `${title} - SEU PROJETO`,
     resolve: (name) => resolvePageComponent(`./Pages/${name}.jsx`, import.meta.glob('./Pages/**/*.jsx')),
     setup({ el, App, props }) {
         const root = createRoot(el);
