@@ -3,7 +3,7 @@
 namespace App\DTO;
 
 use Carbon\Carbon;
-use App\DTO\Collections\DTOCollection;
+use Illuminate\Support\Collection;
 
 class DTO
 {
@@ -35,14 +35,12 @@ class DTO
      * @param iterable $items
      * @return \Illuminate\Support\Collection<static>
      */
-    public static function dtoCollection(iterable $items): DTOCollection
+    public static function toCollection(iterable $items): Collection
     {
-        return new DTOCollection(
-            collect($items)->map(fn($item) => is_object($item)
+        return collect($items)->map(fn($item) => is_object($item)
                 ? static::fromObject($item)
                 : static::fromArray($item)
-            )->all()
-        );
+            );
     }
 
     /**
